@@ -82,34 +82,29 @@
 
 
 //=====================================================
-
 import CommentBox from '@/app/components/comments';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { PortableText } from 'next-sanity';
 import Image from 'next/image';
 
+// BlogProps for the component prop types
 type BlogProps = {
-  params: {
-    slug: string;
+  post: {
+    title: string;
+    paragraph: string;
+    subheading: string;
+    content: any;  // Use the correct type for content
+    image: any;
+    author: {
+      bio: string;
+      image: any;
+      name: string;
+    };
   };
 };
 
-const Blog = async ({ params }: BlogProps) => {
-  const { slug } = params; // Destructure slug from params
-
-  const query = `*[_type == 'skills' && slug.current == "${slug}"] {
-    title,
-    paragraph,
-    subheading,
-    content,
-    image,
-    author->{bio, image, name}
-  }[0]`;
-
-  const post = await client.fetch(query);
-  console.log(post);
-
+const Blog = ({ post }: BlogProps) => {
   return (
     <div className="container px-5 py-24 mx-auto">
       <div className="lg:w-4/5 mx-auto flex flex-wrap">
@@ -152,8 +147,30 @@ const Blog = async ({ params }: BlogProps) => {
   );
 };
 
+// Fetching the data using getServerSideProps
+export async function getServerSideProps({ params }: { params: { slug: string } }) {
+  const { slug } = params;
+
+  const query = `*[_type == 'skills' && slug.current == "${slug}"] {
+    title,
+    paragraph,
+    subheading,
+    content,
+    image,
+    author->{bio, image, name}
+  }[0]`;
+
+  const post = await client.fetch(query);
+
+  if (!post) {
+    return { notFound: true }; // Return a 404 if the post doesn't exist
+  }
+
+  return {
+    props: {
+      post, // Pass the post to the component as a prop
+    },
+  };
+}
+
 export default Blog;
-
-
-
-
