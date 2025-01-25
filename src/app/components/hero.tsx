@@ -2,7 +2,14 @@
 import { urlFor } from "@/sanity/lib/image"
 import Image from "next/image"
 import Link from "next/link"
-
+interface Post {
+  title :string,
+  subheading : string,
+  paragraph : string,
+  image : string,
+  slug : string  ,
+  content : string
+}
 
 
 const Hero = ({elem }: {elem : Post}) => {

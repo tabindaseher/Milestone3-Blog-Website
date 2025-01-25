@@ -4,9 +4,13 @@ import { urlFor } from '@/sanity/lib/image';
 import { PortableText } from 'next-sanity';
 import Image from 'next/image';
 
+type BlogProps = {
+  params: {
+    slug: string;
+  };
+};
 
-
-const Blog = async({params: {slug}  }: {params : {slug:string}}) => {
+const Blog = async({params: {slug}  }: {params : {slug:BlogProps}}) => {
 
   
   
@@ -22,9 +26,6 @@ const Blog = async({params: {slug}  }: {params : {slug:string}}) => {
 
     const post = await client.fetch(query)
 console.log(post);
-
-
-
   return (
  
        
